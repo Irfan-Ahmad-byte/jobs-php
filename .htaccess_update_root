@@ -1,0 +1,6 @@
+<Files "main.py">
+    SetHandler cgi-script
+    Options +ExecCGI
+    Allow from all
+</Files>
+

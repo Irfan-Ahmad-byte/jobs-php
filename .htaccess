@@ -1,0 +1,4 @@
+# Deny access to the folder
+Order allow,deny
+Deny from all
+
