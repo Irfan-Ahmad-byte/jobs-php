@@ -1,0 +1,14 @@
+{
+    "require": {
+        "guzzlehttp/guzzle": "*",
+        "symfony/dom-crawler": "*",
+        "symfony/css-selector": "*",
+        "php-ai/php-ml": "*"
+    },
+    "autoload": {
+        "files": [
+            "main.php"
+        ]
+    }
+}
+

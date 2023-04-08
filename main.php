@@ -16,8 +16,10 @@ use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\RequestInterface;
 use Symfony\Component\DomCrawler\Crawler;
-use TextLanguage\TextLanguage;
-use TextLanguage\Distance\CosineSimilarity;
+use Phpml\FeatureExtraction\TokenCountVectorizer;
+use Phpml\Tokenization\WhitespaceTokenizer;
+use Phpml\FeatureExtraction\TfIdfTransformer;
+use Phpml\Math\Distance\Cosine;
 
 $client = new Client();
 
@@ -112,12 +114,19 @@ function rate_job(string $description, array $keywords): float {
 
 
 function rate_job_cosine(string $description, array $keywords): float {
-    $textLanguage = new TextLanguage();
-    $cosineSimilarity = new CosineSimilarity($textLanguage);
+    $vectorizer = new TokenCountVectorizer(new WhitespaceTokenizer());
+    $tfIdfTransformer = new TfIdfTransformer();
+    $cosineSimilarity = new Cosine();
     
-    $descriptionVector = $textLanguage->getTfIdfVector($description);
-    $query = implode(' ', $keywords);
-    $keywordsVector = $textLanguage->getTfIdfVector($query);
+    $samples = [$description, implode(' ', $keywords)];
+    $vectorizer->fit($samples);
+    $vectorizer->transform($samples);
+    
+    $tfIdfTransformer->fit($samples);
+    $tfIdfTransformer->transform($samples);
+
+    $descriptionVector = $samples[0];
+    $keywordsVector = $samples[1];
 
     $rating = $cosineSimilarity->distance($descriptionVector, $keywordsVector);
     return $rating;
